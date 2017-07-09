@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var jwt = require('jsonwebtoken');
 
 var messages = [{
         text: 'some text',
@@ -15,6 +16,8 @@ var messages = [{
         owner: 'Ben'
     }
 ];
+var users = [];
+
 // use body parser middleware
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -45,6 +48,20 @@ apiRouter.post('/messages', (req, res) => {
     res.json(req.body);
 })
 
+// auth router
+var authRouter = express.Router();
+
+authRouter.post('/register', (req, res) => {
+    var index = users.push(req.body) - 1;
+
+    var user = users[index];
+    user.id = index;
+
+    var token = jwt.sign(user.id, '123');
+    res.json(token);
+})
+
 app.use("/api", apiRouter);
+app.use("/auth", authRouter);
 
 app.listen(1234);
