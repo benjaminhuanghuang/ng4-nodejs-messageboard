@@ -33,10 +33,16 @@ apiRouter.get('/messages', (req, res) => {
     res.json(messages);
 })
 
+apiRouter.get('/messages/:user', (req, res) => {
+    var user = req.params.user;
+    var result = messages.filter(m => m.owner == user);
+    res.json(result);
+})
+
 apiRouter.post('/messages', (req, res) => {
     messages.push(req.body);
     //res.sendStatus(200);
-     res.json(req.body);
+    res.json(req.body);
 })
 
 app.use("/api", apiRouter);
