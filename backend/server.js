@@ -63,6 +63,32 @@ authRouter.post('/register', (req, res) => {
         token
     });
 })
+authRouter.post('/login', (req, res) => {
+    var user = users.find(user => user.email == req.body.email);
+
+    if (!user)
+        sendAuthError(res);
+
+    if (user.password == req.body.password)
+        sendToken(user, res);
+    else
+        sendAuthError(res);
+})
+
+function sendToken(user, res) {
+    var token = jwt.sign(user.id, '123');
+    res.json({
+        firstName: user.firstName,
+        token
+    });
+}
+
+function sendAuthError(res) {
+    return res.json({
+        success: false,
+        message: 'email or password incorrect'
+    });
+}
 
 app.use("/api", apiRouter);
 app.use("/auth", authRouter);
